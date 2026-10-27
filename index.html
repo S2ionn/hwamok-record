@@ -1,0 +1,443 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>화목반 기록장</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@700&family=IBM+Plex+Sans+KR:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: one column notebook: header, student cards, entry form, dated log */
+:root {
+  --bg: #f5f7fa;
+  --surface: #ffffff;
+  --fg: #1c2330;
+  --muted: #5e6878;
+  --line: #dde2ea;
+  --accent: #2b4c9b;
+  --good: #1f7a4d;
+  --good-bg: #e3f3ea;
+  --warn: #9a6200;
+  --warn-bg: #fbefd6;
+  --bad: #b23a3a;
+  --bad-bg: #f9e1e1;
+  --font-display: "Gowun Batang", "Nanum Myeongjo", serif;
+  --font-body: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #12161d; --surface: #1a2029; --fg: #e6e9ef; --muted: #98a2b3; --line: #2c3440;
+    --accent: #8fa9ec; --good: #6fd19c; --good-bg: #17372a; --warn: #f0bb5a; --warn-bg: #3a2c12;
+    --bad: #f08a8a; --bad-bg: #3d1c1c; color-scheme: dark;
+  }
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { margin: 0; background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: 15px; line-height: 1.6; }
+.wrap { max-width: 1080px; margin: 0 auto; padding-block: 32px 64px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 32px; }
+header { display: grid; gap: 4px; }
+.eyebrow { font-size: 12px; letter-spacing: .08em; color: var(--muted); font-weight: 500; }
+h1 { font-family: var(--font-display); font-size: 32px; margin: 0; text-wrap: balance; }
+h2 { font-size: 16px; margin: 0; font-weight: 600; }
+.sub { color: var(--muted); margin: 0; }
+.students { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 860px) { .students { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 460px) { .students { grid-template-columns: 1fr; } }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px; display: grid; gap: 10px; align-content: start; min-width: 0; }
+.card-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+.name { font-family: var(--font-display); font-size: 22px; }
+.meta { font-size: 12px; color: var(--muted); }
+.stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.stat { display: grid; gap: 2px; }
+.stat-label { font-size: 12px; color: var(--muted); }
+.stat-value { font-family: var(--font-mono); font-size: 18px; font-variant-numeric: tabular-nums; }
+.flags { display: grid; gap: 6px; font-size: 13px; }
+.flag { border-left: 3px solid var(--bad); padding-left: 8px; }
+.none { font-size: 13px; color: var(--muted); }
+.traits { display: grid; gap: 4px; font-size: 13px; border-top: 1px solid var(--line); padding-top: 10px; }
+.traits ul { margin: 0; padding-left: 18px; }
+.chip { display: inline-block; font-size: 12px; font-weight: 500; padding: 1px 8px; border-radius: 999px; white-space: nowrap; }
+.c-good { color: var(--good); background: var(--good-bg); }
+.c-warn { color: var(--warn); background: var(--warn-bg); }
+.c-bad { color: var(--bad); background: var(--bad-bg); }
+.c-none { color: var(--muted); background: var(--bg); border: 1px solid var(--line); }
+
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px; display: grid; gap: 14px; }
+form { display: grid; gap: 12px; }
+.row { display: flex; flex-wrap: wrap; gap: 10px; }
+label { display: grid; gap: 4px; font-size: 12px; color: var(--muted); min-width: 0; }
+label.grow { flex: 1 1 220px; }
+label.check { display: flex; align-items: center; gap: 6px; font-size: 14px; color: var(--fg); align-self: end; padding-bottom: 6px; }
+input, select { font: inherit; font-size: 14px; color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 6px 8px; min-width: 0; }
+input[type="number"] { width: 96px; font-family: var(--font-mono); }
+input[type="checkbox"] { width: 16px; height: 16px; }
+input:focus-visible, select:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+button { font: inherit; font-size: 14px; padding: 6px 14px; border-radius: 6px; border: 1px solid var(--line); background: var(--surface); color: var(--fg); cursor: pointer; }
+button.primary { background: var(--accent); border-color: var(--accent); color: var(--surface); font-weight: 500; }
+button.danger { color: var(--bad); border-color: var(--bad); }
+button:disabled { opacity: .5; cursor: default; }
+.status { font-size: 13px; color: var(--muted); margin: 0; }
+.status.err { color: var(--bad); }
+
+.log-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
+.filters { display: flex; flex-wrap: wrap; gap: 6px; }
+.filters button { font-size: 13px; padding: 4px 12px; border-radius: 999px; }
+.filters button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--surface); }
+.day { display: grid; gap: 8px; }
+.day-title { font-family: var(--font-mono); font-size: 13px; color: var(--accent); border-bottom: 1px solid var(--line); padding-bottom: 4px; }
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 620px; }
+th { text-align: left; font-size: 12px; color: var(--muted); font-weight: 500; padding: 6px 8px; }
+td { padding: 8px; border-top: 1px solid var(--line); vertical-align: top; }
+td.who { font-weight: 600; white-space: nowrap; }
+td.num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+td.edit button { font-size: 12px; padding: 2px 10px; }
+tr.important td.who::before { content: ""; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--bad); margin-right: 6px; vertical-align: middle; }
+.small { font-size: 13px; color: var(--muted); }
+.empty { background: var(--surface); border: 1px dashed var(--line); border-radius: 10px; padding: 24px; color: var(--muted); }
+#log { display: grid; gap: 24px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <span class="eyebrow">중1 · 화/목</span>
+    <h1>화목반 기록장</h1>
+    <p class="sub">과제, 단어테스트, 수업 태도 중 중요한 것만 남깁니다.</p>
+    <p class="sub">단어테스트: 한 과 30개 · 화 2과, 목 1과 우선</p>
+    <p class="sub">커트라인: 한 과에 3개까지 틀려도 통과 (두 과 60개면 6개까지)</p>
+  </header>
+
+  <section class="panel" id="gate">
+    <h2>비밀번호</h2>
+    <form id="gate-form">
+      <div class="row">
+        <label class="grow">비밀번호<input type="password" id="gate-key" autocomplete="current-password" required></label>
+      </div>
+      <div class="actions">
+        <button type="submit" class="primary" id="gate-btn">기록 불러오기</button>
+        <p class="status" id="gate-status" aria-live="polite"></p>
+      </div>
+    </form>
+  </section>
+
+  <div id="app" hidden style="display:grid;gap:32px">
+    <section class="students" id="students" aria-label="학생별 요약"></section>
+
+    <section class="panel" aria-labelledby="entry-title">
+      <h2 id="entry-title">기록 입력</h2>
+      <form id="entry">
+        <div class="row">
+          <label>날짜<input type="date" id="f-date" required></label>
+          <label>학생<select id="f-student" required></select></label>
+        </div>
+        <div class="row">
+          <label>과제<select id="f-hw"><option value="">-</option><option>완료</option><option>일부</option><option>미완</option><option>없음</option></select></label>
+          <label class="grow">과제 메모<input id="f-hw-note"></label>
+        </div>
+        <div class="row">
+          <label>맞은 개수<input type="number" id="f-score" min="0" inputmode="numeric"></label>
+          <label>문항 수<input type="number" id="f-total" min="1" value="30" inputmode="numeric"></label>
+          <label class="grow">단어 메모<input id="f-word-note"></label>
+        </div>
+        <div class="row">
+          <label>태도<select id="f-at"><option value="">-</option><option>좋음</option><option>보통</option><option>주의</option></select></label>
+          <label class="grow">태도 메모<input id="f-at-note"></label>
+        </div>
+        <div class="row">
+          <label class="grow">메모<input id="f-note"></label>
+          <label class="check"><input type="checkbox" id="f-important">중요</label>
+        </div>
+        <div class="actions">
+          <button type="submit" class="primary" id="f-save">저장</button>
+          <button type="button" id="f-clear">비우기</button>
+          <button type="button" class="danger" id="f-delete" hidden>삭제</button>
+          <p class="status" id="f-status" aria-live="polite"></p>
+        </div>
+      </form>
+    </section>
+
+    <section style="display:grid;gap:16px">
+      <div class="log-head">
+        <h2>수업별 기록</h2>
+        <div class="filters" id="filters" role="group" aria-label="학생 필터"></div>
+      </div>
+      <div id="log"></div>
+    </section>
+  </div>
+</div>
+
+<script>
+// 구글 Apps Script 웹 앱 주소
+const API_URL = "";
+const KEY_STORE = "hwamok-key";
+
+let key = "";
+try { key = localStorage.getItem(KEY_STORE) || ""; } catch (e) {}
+let students = [];
+let logs = [];
+let filter = "all";
+
+const HW = { "완료": "c-good", "일부": "c-warn", "미완": "c-bad", "없음": "c-none" };
+const AT = { "좋음": "c-good", "보통": "c-none", "주의": "c-bad" };
+const DOW = ["일","월","화","수","목","금","토"];
+const $ = id => document.getElementById(id);
+
+function el(tag, cls, text) {
+  const e = document.createElement(tag);
+  if (cls) e.className = cls;
+  if (text != null) e.textContent = text;
+  return e;
+}
+function chip(text, map) {
+  return el("span", "chip " + (map[text] || "c-none"), text || "-");
+}
+function fmtDate(d) {
+  const dt = new Date(d + "T00:00:00");
+  if (isNaN(dt)) return d;
+  return `${dt.getMonth() + 1}/${dt.getDate()} (${DOW[dt.getDay()]})`;
+}
+function today() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+function nameOf(id) {
+  const s = students.find(s => s.id === id);
+  return s ? s.name : id;
+}
+function passed(word) {
+  return word.total - word.score <= Math.floor(word.total * 0.1 + 1e-9);
+}
+
+async function api(body) {
+  if (!API_URL) throw new Error("구글 시트 연결 주소가 아직 설정되지 않았습니다.");
+  const res = await fetch(API_URL, {
+    method: "POST",
+    headers: { "Content-Type": "text/plain;charset=utf-8" },
+    body: JSON.stringify({ ...body, key })
+  });
+  const data = await res.json();
+  if (!data.ok) {
+    const err = new Error(data.error || "요청이 실패했습니다.");
+    err.auth = data.auth === false;
+    throw err;
+  }
+  students = data.students || [];
+  logs = data.logs || [];
+  renderAll();
+}
+
+function renderStudents() {
+  const box = $("students");
+  box.replaceChildren();
+  for (const s of students) {
+    const mine = logs.filter(l => l.student === s.id).sort((a, b) => b.date.localeCompare(a.date));
+    const hw = mine.filter(l => l.homework && l.homework.status && l.homework.status !== "없음");
+    const done = hw.filter(l => l.homework.status === "완료").length;
+    const words = mine.filter(l => l.word && typeof l.word.score === "number" && l.word.total);
+    const avg = words.length ? Math.round(words.reduce((t, l) => t + l.word.score / l.word.total, 0) / words.length * 100) : null;
+    const lastAt = mine.find(l => l.attitude && l.attitude.level);
+
+    const card = el("article", "card");
+    const head = el("div", "card-head");
+    head.append(el("span", "name", s.name), el("span", "meta", `중1 · ${s.gender}`));
+    const stats = el("div", "stats");
+    const st1 = el("div", "stat"); st1.append(el("span", "stat-label", "과제 완료"), el("span", "stat-value", hw.length ? `${done}/${hw.length}` : "-"));
+    const st2 = el("div", "stat"); st2.append(el("span", "stat-label", "단어 평균"), el("span", "stat-value", avg == null ? "-" : avg + "%"));
+    stats.append(st1, st2);
+
+    const recent = el("div", "flags");
+    const atRow = el("div"); atRow.append(el("span", "stat-label", "최근 태도 "), lastAt ? chip(lastAt.attitude.level, AT) : el("span", "none", "기록 없음"));
+    recent.append(atRow);
+    for (const f of mine.filter(l => l.important && l.note).slice(0, 3)) recent.append(el("div", "flag", `${fmtDate(f.date)} ${f.note}`));
+    card.append(head, stats, recent);
+    const traits = Array.isArray(s.traits) ? s.traits.filter(Boolean) : [];
+    if (traits.length) {
+      const tb = el("div", "traits");
+      tb.append(el("span", "stat-label", "특성"));
+      const ul = el("ul");
+      for (const t of traits) ul.append(el("li", null, t));
+      tb.append(ul);
+      card.append(tb);
+    }
+    box.append(card);
+  }
+}
+
+function renderFilters() {
+  const box = $("filters");
+  box.replaceChildren();
+  for (const opt of [{ id: "all", name: "전체" }, ...students]) {
+    const b = el("button", null, opt.name);
+    b.type = "button";
+    b.id = "filter-" + opt.id;
+    b.setAttribute("aria-pressed", String(filter === opt.id));
+    b.addEventListener("click", () => { filter = opt.id; renderFilters(); renderLog(); });
+    box.append(b);
+  }
+}
+
+function renderLog() {
+  const box = $("log");
+  box.replaceChildren();
+  const rows = logs.filter(l => filter === "all" || l.student === filter);
+  if (!rows.length) {
+    box.append(el("div", "empty", logs.length ? "이 학생의 기록이 아직 없어요." : "아직 기록이 없어요."));
+    return;
+  }
+  const byDate = new Map();
+  for (const r of rows) { if (!byDate.has(r.date)) byDate.set(r.date, []); byDate.get(r.date).push(r); }
+  const order = Object.fromEntries(students.map(s => [s.id, s.order]));
+  for (const d of [...byDate.keys()].sort().reverse()) {
+    const sec = el("div", "day");
+    sec.append(el("div", "day-title", fmtDate(d)));
+    const wrap = el("div", "table-wrap");
+    const t = el("table");
+    const thead = el("thead"); const hr = el("tr");
+    for (const h of ["학생", "과제", "단어", "태도", "메모", ""]) hr.append(el("th", null, h));
+    thead.append(hr);
+    const tb = el("tbody");
+    for (const r of byDate.get(d).sort((a, b) => (order[a.student] || 99) - (order[b.student] || 99))) {
+      const tr = el("tr", r.important ? "important" : null);
+      tr.append(el("td", "who", nameOf(r.student)));
+      const hwTd = el("td"); hwTd.append(chip(r.homework && r.homework.status, HW));
+      if (r.homework && r.homework.note) hwTd.append(el("div", "small", r.homework.note));
+      const wTd = el("td", "num");
+      if (r.word && typeof r.word.score === "number") {
+        wTd.textContent = `${r.word.score}/${r.word.total} `;
+        wTd.append(chip(passed(r.word) ? "통과" : "미달", { "통과": "c-good", "미달": "c-bad" }));
+        if (r.word.note) wTd.append(el("div", "small", r.word.note));
+      } else wTd.textContent = "-";
+      const aTd = el("td"); aTd.append(chip(r.attitude && r.attitude.level, AT));
+      if (r.attitude && r.attitude.note) aTd.append(el("div", "small", r.attitude.note));
+      const eTd = el("td", "edit");
+      const eb = el("button", null, "수정");
+      eb.type = "button";
+      eb.setAttribute("aria-label", `${fmtDate(r.date)} ${nameOf(r.student)} 기록 수정`);
+      eb.addEventListener("click", () => { fillForm(r); $("entry-title").scrollIntoView({ block: "start" }); });
+      eTd.append(eb);
+      tr.append(hwTd, wTd, aTd, el("td", null, r.note || ""), eTd);
+      tb.append(tr);
+    }
+    t.append(thead, tb); wrap.append(t); sec.append(wrap); box.append(sec);
+  }
+}
+
+function renderStudentSelect() {
+  const sel = $("f-student");
+  const cur = sel.value;
+  sel.replaceChildren();
+  for (const s of students) {
+    const o = el("option", null, s.name);
+    o.value = s.id;
+    sel.append(o);
+  }
+  if (students.some(s => s.id === cur)) sel.value = cur;
+}
+
+function renderAll() { renderStudents(); renderFilters(); renderLog(); renderStudentSelect(); syncForm(); }
+
+function currentLog() {
+  const id = $("f-date").value + "_" + $("f-student").value;
+  return logs.find(l => l.id === id) || null;
+}
+function fillForm(r) {
+  $("f-date").value = r ? r.date : $("f-date").value;
+  if (r) $("f-student").value = r.student;
+  $("f-hw").value = r && r.homework ? r.homework.status : "";
+  $("f-hw-note").value = r && r.homework ? r.homework.note : "";
+  $("f-score").value = r && r.word ? r.word.score : "";
+  $("f-total").value = r && r.word ? r.word.total : 30;
+  $("f-word-note").value = r && r.word ? r.word.note : "";
+  $("f-at").value = r && r.attitude ? r.attitude.level : "";
+  $("f-at-note").value = r && r.attitude ? r.attitude.note : "";
+  $("f-note").value = r ? r.note : "";
+  $("f-important").checked = !!(r && r.important);
+  syncForm();
+}
+function syncForm() {
+  const existing = currentLog();
+  $("entry-title").textContent = existing ? "기록 수정" : "기록 입력";
+  $("f-delete").hidden = !existing;
+}
+function setStatus(id, msg, isErr) {
+  const p = $(id);
+  p.textContent = msg;
+  p.classList.toggle("err", !!isErr);
+}
+
+$("f-date").value = today();
+$("f-date").addEventListener("change", () => fillForm(currentLog()));
+$("f-student").addEventListener("change", () => fillForm(currentLog()));
+$("f-clear").addEventListener("click", () => { fillForm(null); setStatus("f-status", ""); });
+
+$("entry").addEventListener("submit", async e => {
+  e.preventDefault();
+  const score = $("f-score").value.trim();
+  const log = {
+    date: $("f-date").value,
+    student: $("f-student").value,
+    homework: { status: $("f-hw").value, note: $("f-hw-note").value.trim() },
+    word: score === "" ? null : { score: Number(score), total: Number($("f-total").value) || 30, note: $("f-word-note").value.trim() },
+    attitude: { level: $("f-at").value, note: $("f-at-note").value.trim() },
+    important: $("f-important").checked,
+    note: $("f-note").value.trim()
+  };
+  if (log.word && (log.word.score < 0 || log.word.score > log.word.total)) {
+    setStatus("f-status", "맞은 개수가 문항 수보다 많습니다.", true);
+    return;
+  }
+  $("f-save").disabled = true;
+  setStatus("f-status", "저장하는 중");
+  try {
+    await api({ action: "save", log });
+    setStatus("f-status", `${fmtDate(log.date)} ${nameOf(log.student)} 기록을 저장했습니다.`);
+  } catch (err) {
+    setStatus("f-status", err.message, true);
+  } finally {
+    $("f-save").disabled = false;
+  }
+});
+
+$("f-delete").addEventListener("click", async () => {
+  const r = currentLog();
+  if (!r || !confirm(`${fmtDate(r.date)} ${nameOf(r.student)} 기록을 삭제할까요?`)) return;
+  setStatus("f-status", "삭제하는 중");
+  try {
+    await api({ action: "delete", id: r.id });
+    fillForm(null);
+    setStatus("f-status", "삭제했습니다.");
+  } catch (err) {
+    setStatus("f-status", err.message, true);
+  }
+});
+
+async function connect() {
+  $("gate-btn").disabled = true;
+  setStatus("gate-status", "불러오는 중");
+  try {
+    await api({ action: "read" });
+    try { localStorage.setItem(KEY_STORE, key); } catch (e) {}
+    $("gate").hidden = true;
+    $("app").hidden = false;
+  } catch (err) {
+    if (err.auth) { key = ""; try { localStorage.removeItem(KEY_STORE); } catch (e) {} }
+    setStatus("gate-status", err.message, true);
+  } finally {
+    $("gate-btn").disabled = false;
+  }
+}
+
+$("gate-form").addEventListener("submit", e => {
+  e.preventDefault();
+  key = $("gate-key").value;
+  connect();
+});
+
+if (key) connect();
+</script>
+</body>
+</html>
