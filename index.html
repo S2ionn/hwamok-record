@@ -5,31 +5,33 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow">
 <title>화목반 기록장</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@700&family=IBM+Plex+Sans+KR:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
 <style>
+/* IM혜민체 (DGB대구은행, 상업용 무료) */
+@font-face { font-family: "ImHyeMin"; src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2106@1.1/IM_Hyemin-Regular.woff2") format("woff2"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "ImHyeMin"; src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2106@1.1/IM_Hyemin-Bold.woff2") format("woff2"); font-weight: 700; font-display: swap; }
 /* Layout: one column notebook: header, student cards, entry form, dated log */
 :root {
-  --bg: #f5f7fa;
+  --bg: #eef6fc;
   --surface: #ffffff;
-  --fg: #1c2330;
-  --muted: #5e6878;
-  --line: #dde2ea;
-  --accent: #2b4c9b;
+  --fg: #1b2a38;
+  --muted: #5a6f82;
+  --line: #cfe3f3;
+  --accent: #2b7bbb;
   --good: #1f7a4d;
   --good-bg: #e3f3ea;
   --warn: #9a6200;
   --warn-bg: #fbefd6;
   --bad: #b23a3a;
   --bad-bg: #f9e1e1;
-  --font-display: "Gowun Batang", "Nanum Myeongjo", serif;
-  --font-body: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
-  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+  --font-display: "ImHyeMin", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  --font-body: "ImHyeMin", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  --font-mono: "ImHyeMin", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #12161d; --surface: #1a2029; --fg: #e6e9ef; --muted: #98a2b3; --line: #2c3440;
-    --accent: #8fa9ec; --good: #6fd19c; --good-bg: #17372a; --warn: #f0bb5a; --warn-bg: #3a2c12;
+    --bg: #0f1a24; --surface: #16232f; --fg: #e4eef6; --muted: #93a8ba; --line: #24384a;
+    --accent: #8cc8f2; --good: #6fd19c; --good-bg: #17372a; --warn: #f0bb5a; --warn-bg: #3a2c12;
     --bad: #f08a8a; --bad-bg: #3d1c1c; color-scheme: dark;
   }
 }
@@ -39,8 +41,8 @@ body { margin: 0; background: var(--bg); color: var(--fg); font-family: var(--fo
 .wrap { max-width: 1080px; margin: 0 auto; padding-block: 32px 64px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 32px; }
 header { display: grid; gap: 4px; }
 .eyebrow { font-size: 12px; letter-spacing: .08em; color: var(--muted); font-weight: 500; }
-h1 { font-family: var(--font-display); font-size: 32px; margin: 0; text-wrap: balance; }
-h2 { font-size: 16px; margin: 0; font-weight: 600; }
+h1 { font-family: var(--font-display); font-size: 32px; font-weight: 700; margin: 0; text-wrap: balance; }
+h2 { font-size: 16px; margin: 0; font-weight: 700; }
 .sub { color: var(--muted); margin: 0; }
 .students { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
 @media (max-width: 860px) { .students { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
